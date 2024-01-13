@@ -1,9 +1,17 @@
-import { ComponentFixture, TestBed, fakeAsync,tick,flush } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+  flush,
+  flushMicrotasks,
+} from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
-
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let el: DebugElement;
@@ -68,5 +76,34 @@ describe('AppComponent', () => {
     }, 3000);
     //tick(8000);
     flush();
+  }));
+
+  it('should test the promises', fakeAsync(() => {
+    let counter = 0;
+    setTimeout(() => {
+      counter = counter + 2;
+    }, 2000);
+    //Set TimeOut - MacroTasks
+    //Promise - MicroTasks
+    setTimeout(() => {
+      counter = counter + 3;
+    }, 3000);
+    Promise.resolve().then(() => {
+      counter = counter + 1;
+    });
+    flushMicrotasks();
+    expect(counter).toBe(1);
+    flush();
+    expect(counter).toBe(6);
+  }));
+
+  it('should test observable', fakeAsync(() => {
+    let isSubscribed = false;
+    let myObs = of(isSubscribed).pipe(delay(1000));
+    myObs.subscribe(() => {
+      isSubscribed = true;
+    });
+    tick(1000);
+    expect(isSubscribed).toBe(true);
   }));
 });
