@@ -12,6 +12,7 @@ import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { GradePipe } from './grade.pipe';
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let el: DebugElement;
@@ -19,7 +20,7 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule],
-      declarations: [AppComponent],
+      declarations: [AppComponent,GradePipe],
     })
       .compileComponents()
       .then(() => {
